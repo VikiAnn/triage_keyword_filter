@@ -5,7 +5,8 @@ class TriageKeywordFilter
 
     possible_angina? ||
     possible_breathing_problem? ||
-    slurring_speech?
+    slurring_speech? ||
+    numbness_in_extremities?
   end
 
   private
@@ -28,6 +29,10 @@ class TriageKeywordFilter
     speech_related? && corresponding_symptoms?(slurring_symptoms)
   end
 
+  def numbness_in_extremities?
+    extremities? && corresponding_symptoms?(numbness)
+  end
+
   def chest_or_left_arm?
     @words.any? { |word| word == 'chest' } || @patient_symptoms.include?('left arm')
   end
@@ -40,6 +45,12 @@ class TriageKeywordFilter
     @words.any? { |word| word.start_with?('speak') || word == 'speech' }
   end
 
+  def extremities?
+    @words.any? do |word|
+      extremities.any? { |extremity| extremity == word }
+    end
+  end
+
   def angina_symptoms
     ['pain', 'pains', 'painful', 'pressure', 'pressing', 'squeezed', 'squeezing']
   end
@@ -50,6 +61,14 @@ class TriageKeywordFilter
 
   def slurring_symptoms
     ['slur', 'slurred', 'slurring', 'slurs']
+  end
+
+  def numbness
+    ['numb', 'numbness']
+  end
+
+  def extremities
+    ['arm', 'arms', 'leg', 'legs', 'face']
   end
 
   def corresponding_symptoms?(symptoms)

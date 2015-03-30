@@ -55,4 +55,19 @@ describe 'triage keyword filter' do
     expect(filter.emergent?('I drank a slurpee too fast and got a headache')).to eq false
     expect(filter.emergent?('I am very nervous about public speaking')).to eq false
   end
+
+  it 'returns true for numbness in arm, leg or face' do
+    filter = TriageKeywordFilter.new
+
+    expect(filter.emergent?('My face feels numb')).to eq true
+    expect(filter.emergent?('I have numbness in my arm')).to eq true
+    expect(filter.emergent?('My leg feels numb')).to eq true
+  end
+
+  it 'returns false for non-extremity numbness or extremity references without numbness' do
+    filter = TriageKeywordFilter.new
+
+    expect(filter.emergent?('The scar from my incision is a little numb')).to eq false
+    expect(filter.emergent?('My leg bothers me after I go running')).to eq false
+  end
 end
