@@ -1,6 +1,7 @@
 class TriageKeywordFilter
   def emergent?(patient_symptoms)
-    @words = clean(patient_symptoms.split(' '))
+    @patient_symptoms = patient_symptoms
+    @words            = clean(patient_symptoms.split(' '))
 
     possible_angina? ||
     possible_breathing_problem?
@@ -23,7 +24,7 @@ class TriageKeywordFilter
   end
 
   def chest_or_left_arm?
-    @words.any? { |word| word == 'chest' || 'left arm' }
+    @words.any? { |word| word == 'chest' } || @patient_symptoms.include?('left arm')
   end
 
   def breath_related?
@@ -31,7 +32,7 @@ class TriageKeywordFilter
   end
 
   def angina_symptoms
-    ['pain', 'pressure', 'pressing', 'squeezed', 'squeezing']
+    ['pain', 'pains', 'painful', 'pressure', 'pressing', 'squeezed', 'squeezing']
   end
 
   def breathing_symptoms
