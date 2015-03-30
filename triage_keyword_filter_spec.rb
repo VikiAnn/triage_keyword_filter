@@ -33,4 +33,26 @@ describe 'triage keyword filter' do
     expect(filter.emergent?('I am experiencing s.o.b.')).to eq true
     expect(filter.emergent?('I am having difficulty breathing')).to eq true
   end
+
+  it 'returns false for non-breath related short or difficulty sentences' do
+    filter = TriageKeywordFilter.new
+
+    expect(filter.emergent?('I am having difficulty adjusting to new life changes')).to eq false
+    expect(filter.emergent?('I have a new short brown mark on my skin')).to eq false
+  end
+
+  it 'returns true for slurred speech' do
+    filter = TriageKeywordFilter.new
+
+    expect(filter.emergent?('I think my speech is slurred')).to eq true
+    expect(filter.emergent?('I am slurring my speech')).to eq true
+    expect(filter.emergent?('I am speaking with a slur')).to eq true
+  end
+
+  it 'returns false for non-speech or non-slur related sentences' do
+    filter = TriageKeywordFilter.new
+
+    expect(filter.emergent?('I drank a slurpee too fast and got a headache')).to eq false
+    expect(filter.emergent?('I am very nervous about public speaking')).to eq false
+  end
 end

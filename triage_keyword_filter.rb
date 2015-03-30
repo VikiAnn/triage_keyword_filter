@@ -4,7 +4,8 @@ class TriageKeywordFilter
     @words            = clean(patient_symptoms.split(' '))
 
     possible_angina? ||
-    possible_breathing_problem?
+    possible_breathing_problem? ||
+    slurring_speech?
   end
 
   private
@@ -23,6 +24,10 @@ class TriageKeywordFilter
     breath_related? && corresponding_symptoms?(breathing_symptoms)
   end
 
+  def slurring_speech?
+    speech_related? && corresponding_symptoms?(slurring_symptoms)
+  end
+
   def chest_or_left_arm?
     @words.any? { |word| word == 'chest' } || @patient_symptoms.include?('left arm')
   end
@@ -31,12 +36,20 @@ class TriageKeywordFilter
     @words.any? { |word| word.start_with?('breath') || word == 'sob' }
   end
 
+  def speech_related?
+    @words.any? { |word| word.start_with?('speak') || word == 'speech' }
+  end
+
   def angina_symptoms
     ['pain', 'pains', 'painful', 'pressure', 'pressing', 'squeezed', 'squeezing']
   end
 
   def breathing_symptoms
     ['difficult', 'difficulty', 'short', 'shortness', 'sob']
+  end
+
+  def slurring_symptoms
+    ['slur', 'slurred', 'slurring', 'slurs']
   end
 
   def corresponding_symptoms?(symptoms)
