@@ -33,6 +33,16 @@ class TriageKeywordFilter
     extremities? && corresponding_symptoms?(numbness)
   end
 
+  def rapid_heart_rate?
+    rapid? && corresponding_symptoms?(heart_rate)
+  end
+
+  def corresponding_symptoms?(symptoms)
+    @words.any? do |word|
+      symptoms.any? { |symptom| symptom == word }
+    end
+  end
+
   def chest_or_left_arm?
     @words.any? { |word| word == 'chest' } || @patient_symptoms.include?('left arm')
   end
@@ -49,6 +59,10 @@ class TriageKeywordFilter
     @words.any? do |word|
       extremities.any? { |extremity| extremity == word }
     end
+  end
+
+  def rapid?
+    @words.any? { |word| word.start_with?('rapid') || word == 'fast' }
   end
 
   def angina_symptoms
@@ -71,9 +85,7 @@ class TriageKeywordFilter
     ['arm', 'arms', 'leg', 'legs', 'face']
   end
 
-  def corresponding_symptoms?(symptoms)
-    @words.any? do |word|
-      symptoms.any? { |symptom| symptom == word }
-    end
+  def heart_rate
+    ['heart', 'beat', 'hb', 'heartbeat', 'rate', 'beating']
   end
 end
