@@ -3,10 +3,7 @@ class TriageKeywordFilter
     @patient_symptoms = patient_symptoms
     @words            = clean(patient_symptoms.split(' '))
 
-    possible_angina? ||
-    possible_breathing_problem? ||
-    slurring_speech? ||
-    numbness_in_extremities?
+    emergent_conditions.any?
   end
 
   private
@@ -15,6 +12,14 @@ class TriageKeywordFilter
     words.map do |word|
       word.downcase.gsub(/[^a-z]/, '')
     end
+  end
+
+  def emergent_conditions
+    [ possible_angina?,
+      possible_breathing_problem?,
+      slurring_speech?,
+      numbness_in_extremities?,
+      rapid_heart_rate? ]
   end
 
   def possible_angina?
