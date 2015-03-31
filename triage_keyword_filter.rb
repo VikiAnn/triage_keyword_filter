@@ -19,7 +19,9 @@ class TriageKeywordFilter
       possible_breathing_problem?,
       slurring_speech?,
       numbness_in_extremities?,
-      rapid_heart_rate? ]
+      rapid_heart_rate?,
+      triggers_in_any_context?,
+      triggering_phrases? ]
   end
 
   def possible_angina?
@@ -40,6 +42,14 @@ class TriageKeywordFilter
 
   def rapid_heart_rate?
     rapid? && corresponding_symptoms?(heart_rate)
+  end
+
+  def triggers_in_any_context?
+    corresponding_symptoms?(any_context_triggers)
+  end
+
+  def triggering_phrases?
+    triggering_phrases.any? { |phrase| @patient_symptoms.include?(phrase) }
   end
 
   def corresponding_symptoms?(symptoms)
@@ -92,5 +102,13 @@ class TriageKeywordFilter
 
   def heart_rate
     ['heart', 'beat', 'hb', 'heartbeat', 'rate', 'beating']
+  end
+
+  def any_context_triggers
+    ['suicide', 'stroke', 'palpitations', 'syncope', 'pancreatitis', 'cardiac', 'seizure', 'tachycardia', 'kill']
+  end
+
+  def triggering_phrases
+    ['heart attack', 'abdominal pain', 'passed out', 'asthma attack']
   end
 end

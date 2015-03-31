@@ -93,4 +93,29 @@ describe '#emergent?' do
       expect(filter.emergent?('I have been experiencing mild heart burn')).to eq false
     end
   end
+
+  context 'triggering phrases or individual words' do
+    it 'returns true for any of the any individual triggering words' do
+      filter = TriageKeywordFilter.new
+
+      expect(filter.emergent?('I am thinking about suicide')).to eq true
+      expect(filter.emergent?('I think my mother is having a stroke')).to eq true
+      expect(filter.emergent?('I have been experiencing heart palpitations')).to eq true
+      expect(filter.emergent?('I had an episode of syncope')).to eq true
+      expect(filter.emergent?('I think it is pancreatitis')).to eq true
+      expect(filter.emergent?('I have cardiac issues')).to eq true
+      expect(filter.emergent?('My mother just had a seizure')).to eq true
+      expect(filter.emergent?('I have tachycardia')).to eq true
+      expect(filter.emergent?('I want to kill someone')).to eq true
+    end
+
+    it 'returns true if triggering phrases are present' do
+      filter = TriageKeywordFilter.new
+
+      expect(filter.emergent?('I think my coworker is having a heart attack')).to eq true
+      expect(filter.emergent?('I have bad abdominal pain')).to eq true
+      expect(filter.emergent?('My roommate passed out onto the floor')).to eq true
+      expect(filter.emergent?('I am having an asthma attack')).to eq true
+    end
+  end
 end
