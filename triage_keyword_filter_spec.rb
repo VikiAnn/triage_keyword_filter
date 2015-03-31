@@ -95,7 +95,7 @@ describe '#emergent?' do
   end
 
   context 'triggering phrases or individual words' do
-    it 'returns true for any of the any individual triggering words' do
+    it 'returns true for any of the individual triggering words' do
       filter = TriageKeywordFilter.new
 
       expect(filter.emergent?('I am thinking about suicide')).to eq true

@@ -1,12 +1,18 @@
+require_relative 'keyword_lists'
+
 class TriageKeywordFilter
-  def emergent?(patient_symptoms)
-    @patient_symptoms = patient_symptoms
-    @words            = clean(patient_symptoms.split(' '))
+  include KeywordLists
+
+  def emergent?(patient_report)
+    @patient_report = patient_report
+    @words          = clean(patient_report.split(' '))
 
     emergent_conditions.any?
   end
 
   private
+
+  attr_reader :words, :patient_report
 
   def clean(words)
     words.map do |word|
@@ -25,90 +31,52 @@ class TriageKeywordFilter
   end
 
   def possible_angina?
-    chest_or_left_arm? && corresponding_symptoms?(angina_symptoms)
+    chest_or_left_arm? && contains_words_from?(angina_symptoms)
   end
 
   def possible_breathing_problem?
-    breath_related? && corresponding_symptoms?(breathing_symptoms)
+    breath_related? && contains_words_from?(breathing_symptoms)
   end
 
   def slurring_speech?
-    speech_related? && corresponding_symptoms?(slurring_symptoms)
+    speech_related? && contains_words_from?(slurring_symptoms)
   end
 
   def numbness_in_extremities?
-    extremities? && corresponding_symptoms?(numbness)
+    contains_words_from?(extremities) && contains_words_from?(numbness)
   end
 
   def rapid_heart_rate?
-    rapid? && corresponding_symptoms?(heart_rate)
+    rapid? && contains_words_from?(heart_rate)
   end
 
   def triggers_in_any_context?
-    corresponding_symptoms?(any_context_triggers)
+    contains_words_from?(any_context_triggers)
   end
 
   def triggering_phrases?
-    triggering_phrases.any? { |phrase| @patient_symptoms.include?(phrase) }
+    triggering_phrases.any? { |phrase| patient_report.include?(phrase) }
   end
 
-  def corresponding_symptoms?(symptoms)
-    @words.any? do |word|
+  def contains_words_from?(symptoms)
+    words.any? do |word|
       symptoms.any? { |symptom| symptom == word }
     end
   end
 
   def chest_or_left_arm?
-    @words.any? { |word| word == 'chest' } || @patient_symptoms.include?('left arm')
+    words.any? { |word| word == 'chest' } || patient_report.include?('left arm')
   end
 
   def breath_related?
-    @words.any? { |word| word.start_with?('breath') || word == 'sob' }
+    words.any? { |word| word.start_with?('breath') || word == 'sob' }
   end
 
   def speech_related?
-    @words.any? { |word| word.start_with?('speak') || word == 'speech' }
-  end
-
-  def extremities?
-    @words.any? do |word|
-      extremities.any? { |extremity| extremity == word }
-    end
+    words.any? { |word| word.start_with?('speak') || word == 'speech' }
   end
 
   def rapid?
-    @words.any? { |word| word.start_with?('rapid') || word == 'fast' }
-  end
-
-  def angina_symptoms
-    ['pain', 'pains', 'painful', 'pressure', 'pressing', 'squeezed', 'squeezing']
-  end
-
-  def breathing_symptoms
-    ['difficult', 'difficulty', 'short', 'shortness', 'sob']
-  end
-
-  def slurring_symptoms
-    ['slur', 'slurred', 'slurring', 'slurs']
-  end
-
-  def numbness
-    ['numb', 'numbness']
-  end
-
-  def extremities
-    ['arm', 'arms', 'leg', 'legs', 'face']
-  end
-
-  def heart_rate
-    ['heart', 'beat', 'hb', 'heartbeat', 'rate', 'beating']
-  end
-
-  def any_context_triggers
-    ['suicide', 'stroke', 'palpitations', 'syncope', 'pancreatitis', 'cardiac', 'seizure', 'tachycardia', 'kill']
-  end
-
-  def triggering_phrases
-    ['heart attack', 'abdominal pain', 'passed out', 'asthma attack']
+    words.any? { |word| word.start_with?('rapid') || word == 'fast' }
   end
 end
